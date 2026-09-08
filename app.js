@@ -401,14 +401,15 @@ scanBarcodeButton.addEventListener("click", async function () {
 
     scannerModal.style.display = "block";
 
-    scannerStatus.textContent = "Starting camera...";
+    scannerStatus.textContent =
+        "Camera ready — hold the barcode steady in the centre.";
 
     barcodeDetected = false;
 
     try {
 
         barcodeReader =
-            new ZXingBrowser.BrowserMultiFormatReader();
+            new ZXingBrowser.BrowserMultiFormatOneDReader();
 
         scannerControls =
             await barcodeReader.decodeFromConstraints(
