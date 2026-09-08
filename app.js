@@ -314,7 +314,7 @@ closeEditModal.addEventListener("click", function () {
 });
 
 
-editItemForm.addEventListener("submit", function (event) {
+editItemForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
@@ -345,6 +345,21 @@ editItemForm.addEventListener("submit", function (event) {
             document.getElementById("editExpiryDate").value
     };
 
+    try {
+
+        await saveInventory();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "The changes could not be saved. Please try again."
+        );
+
+        return;
+    }
+
     editItemModal.style.display = "none";
 
     updateLocationCounts();
@@ -365,7 +380,7 @@ window.addEventListener("click", function (event) {
 // DELETE ITEM
 // --------------------------------------------------
 
-function deleteItem(index) {
+async function deleteItem(index) {
 
     const item = inventory[index];
 
@@ -377,7 +392,26 @@ function deleteItem(index) {
         return;
     }
 
+    const deletedItem = inventory[index];
+
     inventory.splice(index, 1);
+
+    try {
+
+        await saveInventory();
+
+    } catch (error) {
+
+        console.error(error);
+
+        inventory.splice(index, 0, deletedItem);
+
+        alert(
+            "The item could not be deleted. Please try again."
+        );
+
+        return;
+    }
 
     updateLocationCounts();
     displayInventory();
@@ -503,7 +537,7 @@ window.addEventListener("click", function (event) {
 // HANDLE SCANNED BARCODE
 // --------------------------------------------------
 
-function handleScannedBarcode(barcode) {
+async function handleScannedBarcode(barcode) {
 
     stopScanner();
 
@@ -527,11 +561,28 @@ function handleScannedBarcode(barcode) {
 
         if (increaseQuantity) {
 
-            existingItem.quantity += 1;
+    existingItem.quantity += 1;
 
-            updateLocationCounts();
-            displayInventory();
-        }
+    try {
+
+        await saveInventory();
+
+    } catch (error) {
+
+        console.error(error);
+
+        existingItem.quantity -= 1;
+
+        alert(
+            "The quantity could not be saved. Please try again."
+        );
+
+        return;
+    }
+
+    updateLocationCounts();
+    displayInventory();
+}
 
         return;
     }
