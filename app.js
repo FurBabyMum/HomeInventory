@@ -1,0 +1,374 @@
+// Home Inventory - temporary test data
+
+let inventory = [
+    {
+        product: "Heinz Baked Beans",
+        quantity: 4,
+        unit: "cans",
+        location: "Pantry 1"
+    },
+    {
+        product: "San Remo Spaghetti",
+        quantity: 3,
+        unit: "packets",
+        location: "Pantry 2"
+    },
+    {
+        product: "Milk",
+        quantity: 2,
+        unit: "bottles",
+        location: "Fridge 1"
+    },
+    {
+        product: "Chicken Breast",
+        quantity: 3,
+        unit: "portions",
+        location: "Freezer 1"
+    },
+    {
+        product: "Frozen Peas",
+        quantity: 2,
+        unit: "bags",
+        location: "Chest Freezer"
+    },
+    {
+        product: "Washing Powder",
+        quantity: 1,
+        unit: "box",
+        location: "Laundry"
+    }
+];
+
+let selectedLocation = "All";
+
+const inventoryList = document.getElementById("inventoryList");
+const searchInput = document.getElementById("searchInput");
+const locationCards = document.querySelectorAll(".location-card");
+const showAllButton = document.getElementById("showAllButton");
+
+
+// Display inventory
+function displayInventory() {
+
+    const searchText = searchInput.value.toLowerCase();
+
+    const filteredInventory = inventory
+        .map((item, index) => ({ item, index }))
+        .filter(entry => {
+
+            const item = entry.item;
+
+            const matchesLocation =
+                selectedLocation === "All" ||
+                item.location === selectedLocation;
+
+            const matchesSearch =
+                item.product.toLowerCase().includes(searchText);
+
+            return matchesLocation && matchesSearch;
+        });
+
+    inventoryList.innerHTML = "";
+
+    if (filteredInventory.length === 0) {
+        inventoryList.innerHTML = "<p>No items found.</p>";
+        return;
+    }
+
+    filteredInventory.forEach(entry => {
+
+        const item = entry.item;
+        const index = entry.index;
+
+        const itemDiv = document.createElement("div");
+
+        itemDiv.className = "food-item";
+
+        // Make unit plural when quantity is more than 1
+        let displayUnit = item.unit;
+
+        if (item.quantity !== 1 && !displayUnit.endsWith("s")) {
+            displayUnit += "s";
+        }
+
+        // Format expiry date
+        let expiryText = "";
+
+        if (item.expiry) {
+
+            const expiryDate = new Date(item.expiry + "T00:00:00");
+
+            expiryText = `
+                <div class="item-expiry">
+                    📅 Expiry: ${expiryDate.toLocaleDateString("en-AU")}
+                </div>
+            `;
+        }
+
+        // Category - older test items may not have one
+        const categoryText = item.category
+            ? item.category
+            : "Uncategorised";
+
+        itemDiv.innerHTML = `
+            <div class="item-details">
+
+                <h3>${item.product}</h3>
+
+                <p>
+                    ${categoryText} ·
+                    ${item.quantity} ${displayUnit}
+                </p>
+
+                <p>
+                    📍 ${item.location}
+                </p>
+
+                ${expiryText}
+
+            </div>
+
+            <div class="item-actions">
+
+                <button
+                    class="edit-button"
+                    onclick="editItem(${index})">
+                    Edit
+                </button>
+
+                <button
+                    class="delete-button"
+                    onclick="deleteItem(${index})">
+                    Delete
+                </button>
+
+            </div>
+        `;
+
+        inventoryList.appendChild(itemDiv);
+    });
+}
+
+
+// Location buttons
+locationCards.forEach(card => {
+
+    card.addEventListener("click", function () {
+
+        selectedLocation = card.dataset.location;
+
+        displayInventory();
+    });
+
+});
+
+
+// Show all button
+if (showAllButton) {
+
+    showAllButton.addEventListener("click", function () {
+
+        selectedLocation = "All";
+
+        displayInventory();
+    });
+
+}
+
+
+// Search
+searchInput.addEventListener("input", function () {
+
+    displayInventory();
+
+});
+
+function updateLocationCounts() {
+
+    locationCards.forEach(card => {
+
+        const location = card.dataset.location;
+
+        const count = inventory.filter(item =>
+            item.location === location
+        ).length;
+
+        const countElement = card.querySelector(".location-count");
+
+        countElement.textContent = count;
+    });
+}
+
+// Add Item form
+
+const addItemButton = document.getElementById("addItemButton");
+const addItemModal = document.getElementById("addItemModal");
+const closeModal = document.getElementById("closeModal");
+const addItemForm = document.getElementById("addItemForm");
+
+addItemButton.addEventListener("click", function () {
+    addItemModal.style.display = "block";
+});
+
+closeModal.addEventListener("click", function () {
+    addItemModal.style.display = "none";
+});
+
+window.addEventListener("click", function (event) {
+    if (event.target === addItemModal) {
+        addItemModal.style.display = "none";
+    }
+});
+
+addItemForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    const newItem = {
+        product: document.getElementById("productName").value,
+        barcode: document.getElementById("barcode").value,
+        category: document.getElementById("category").value,
+        quantity: Number(document.getElementById("quantity").value),
+        unit: document.getElementById("unit").value,
+        location: document.getElementById("location").value,
+        expiry: document.getElementById("expiryDate").value
+    };
+
+    inventory.push(newItem);
+
+    addItemForm.reset();
+
+    document.getElementById("quantity").value = 1;
+
+    addItemModal.style.display = "none";
+
+    selectedLocation = "All";
+
+    updateLocationCounts();
+    displayInventory();
+});
+
+// --------------------------------------------------
+// EDIT ITEM
+// --------------------------------------------------
+
+const editItemModal =
+    document.getElementById("editItemModal");
+
+const editItemForm =
+    document.getElementById("editItemForm");
+
+const closeEditModal =
+    document.getElementById("closeEditModal");
+
+
+function editItem(index) {
+
+    const item = inventory[index];
+
+    document.getElementById("editIndex").value = index;
+
+    document.getElementById("editProductName").value =
+        item.product || "";
+
+    document.getElementById("editBarcode").value =
+        item.barcode || "";
+
+    document.getElementById("editCategory").value =
+        item.category || "Food";
+
+    document.getElementById("editQuantity").value =
+        item.quantity || 1;
+
+    document.getElementById("editUnit").value =
+        item.unit || "item";
+
+    document.getElementById("editLocation").value =
+        item.location;
+
+    document.getElementById("editExpiryDate").value =
+        item.expiry || "";
+
+    editItemModal.style.display = "block";
+}
+
+
+closeEditModal.addEventListener("click", function () {
+
+    editItemModal.style.display = "none";
+
+});
+
+
+editItemForm.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    const index =
+        Number(document.getElementById("editIndex").value);
+
+    inventory[index] = {
+
+        product:
+            document.getElementById("editProductName").value,
+
+        barcode:
+            document.getElementById("editBarcode").value,
+
+        category:
+            document.getElementById("editCategory").value,
+
+        quantity:
+            Number(document.getElementById("editQuantity").value),
+
+        unit:
+            document.getElementById("editUnit").value,
+
+        location:
+            document.getElementById("editLocation").value,
+
+        expiry:
+            document.getElementById("editExpiryDate").value
+    };
+
+    editItemModal.style.display = "none";
+
+    updateLocationCounts();
+    displayInventory();
+
+});
+
+
+window.addEventListener("click", function (event) {
+
+    if (event.target === editItemModal) {
+        editItemModal.style.display = "none";
+    }
+
+});
+
+// --------------------------------------------------
+// DELETE ITEM
+// --------------------------------------------------
+
+function deleteItem(index) {
+
+    const item = inventory[index];
+
+    const confirmed = confirm(
+        "Delete " + item.product + " from your inventory?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    inventory.splice(index, 1);
+
+    updateLocationCounts();
+    displayInventory();
+}
+
+// Display inventory when app opens
+updateLocationCounts();
+displayInventory();

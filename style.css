@@ -1,0 +1,202 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    color: #222;
+}
+
+header {
+    background: white;
+    padding: 25px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+header p {
+    margin: 8px 0 0;
+    color: #666;
+}
+
+main {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+.search-section {
+    margin-bottom: 20px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 15px;
+    font-size: 17px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background: white;
+}
+
+.locations {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.locations {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.location-icon {
+    display: block;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.location-name {
+    display: block;
+    font-weight: bold;
+}
+
+.location-count {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+}
+
+.inventory-section h2 {
+    margin-bottom: 15px;
+}
+
+.food-item {
+    background: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.food-item h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+
+.food-item p {
+    margin: 0;
+    color: #666;
+}
+
+.scan-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border: none;
+    border-radius: 30px;
+
+    padding: 16px 28px;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 500px) {
+
+    header h1 {
+        font-size: 24px;
+    }
+
+    .locations {
+        gap: 7px;
+    }
+
+    .location-card {
+        padding: 12px 5px;
+    }
+
+    .location-icon {
+        font-size: 24px;
+    }
+}
+
+/* Add Item Modal */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.close-button {
+    float: right;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+#addItemForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#addItemForm label {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+#addItemForm input,
+#addItemForm select {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+#addItemButton {
+    padding: 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.save-item-button {
+    margin-top: 15px;
+    padding: 14px;
+    font-size: 17px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
