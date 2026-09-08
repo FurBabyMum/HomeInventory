@@ -441,6 +441,9 @@ scanBarcodeButton.addEventListener("click", async function () {
                 }
             );
 
+            scannerStatus.textContent =
+                "Camera ready — hold a barcode in front of the camera.";
+
     } catch (error) {
 
         console.error(error);
