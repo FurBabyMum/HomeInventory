@@ -369,6 +369,165 @@ function deleteItem(index) {
     displayInventory();
 }
 
+// --------------------------------------------------
+// BARCODE SCANNER
+// --------------------------------------------------
+
+const scanBarcodeButton =
+    document.getElementById("scanBarcodeButton");
+
+const scannerModal =
+    document.getElementById("scannerModal");
+
+const closeScanner =
+    document.getElementById("closeScanner");
+
+const scannerVideo =
+    document.getElementById("scannerVideo");
+
+const scannerStatus =
+    document.getElementById("scannerStatus");
+
+
+let barcodeReader = null;
+let scannerControls = null;
+let barcodeDetected = false;
+
+
+// Open scanner
+scanBarcodeButton.addEventListener("click", async function () {
+
+    scannerModal.style.display = "block";
+
+    scannerStatus.textContent = "Starting camera...";
+
+    barcodeDetected = false;
+
+    try {
+
+        barcodeReader =
+            new ZXingBrowser.BrowserMultiFormatReader();
+
+        scannerControls =
+            await barcodeReader.decodeFromConstraints(
+
+                {
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    }
+                },
+
+                scannerVideo,
+
+                function (result, error, controls) {
+
+                    if (result && !barcodeDetected) {
+
+                        barcodeDetected = true;
+
+                        const barcode = result.getText();
+
+                        scannerStatus.textContent =
+                            "Barcode found: " + barcode;
+
+                        controls.stop();
+
+                        handleScannedBarcode(barcode);
+                    }
+                }
+            );
+
+    } catch (error) {
+
+        console.error(error);
+
+        scannerStatus.textContent =
+            "Unable to start camera. Please check camera permission.";
+    }
+
+});
+
+
+// Close scanner
+function stopScanner() {
+
+    if (scannerControls) {
+
+        scannerControls.stop();
+
+        scannerControls = null;
+    }
+
+    scannerModal.style.display = "none";
+}
+
+
+closeScanner.addEventListener("click", function () {
+
+    stopScanner();
+
+});
+
+
+window.addEventListener("click", function (event) {
+
+    if (event.target === scannerModal) {
+
+        stopScanner();
+    }
+
+});
+
+
+// --------------------------------------------------
+// HANDLE SCANNED BARCODE
+// --------------------------------------------------
+
+function handleScannedBarcode(barcode) {
+
+    stopScanner();
+
+
+    // Look for an existing product with the same barcode
+    const existingIndex = inventory.findIndex(item =>
+        item.barcode === barcode
+    );
+
+
+    if (existingIndex !== -1) {
+
+        const existingItem = inventory[existingIndex];
+
+        const increaseQuantity = confirm(
+            existingItem.product +
+            " is already in your inventory.\n\n" +
+            "Increase quantity by 1?"
+        );
+
+
+        if (increaseQuantity) {
+
+            existingItem.quantity += 1;
+
+            updateLocationCounts();
+            displayInventory();
+        }
+
+        return;
+    }
+
+
+    // New barcode - open Add Item form
+    document.getElementById("barcode").value = barcode;
+
+    addItemModal.style.display = "block";
+
+    document.getElementById("productName").focus();
+}
+
+
 // Display inventory when app opens
 updateLocationCounts();
 displayInventory();

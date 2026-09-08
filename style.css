@@ -200,3 +200,96 @@ main {
     border-radius: 10px;
     cursor: pointer;
 }
+
+/* Inventory item details */
+
+.food-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-details h3 {
+    margin: 0 0 6px 0;
+}
+
+.item-details p {
+    margin: 4px 0;
+}
+
+.item-expiry {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #666;
+}
+
+
+/* Edit and Delete buttons */
+
+.item-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.edit-button,
+.delete-button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-button {
+    background: #e7e7e7;
+}
+
+.delete-button {
+    background: #f4dada;
+}
+
+
+/* Mobile layout */
+
+@media (max-width: 500px) {
+
+    .food-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .item-actions {
+        justify-content: flex-end;
+    }
+
+}
+
+/* Barcode Scanner */
+
+.scanner-content {
+    text-align: center;
+}
+
+.scanner-instructions {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+#scannerVideo {
+    width: 100%;
+    max-height: 420px;
+    background: black;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+#scannerStatus {
+    margin-top: 15px;
+    font-weight: bold;
+}
+

@@ -123,8 +123,8 @@
 
 
     <!-- Scan button -->
-    <button class="scan-button">
-        📷 Scan Barcode
+    <button class="scan-button" id="scanBarcodeButton">
+    📷 Scan Barcode
     </button>
 
     <!-- Add Item Modal -->
@@ -303,6 +303,37 @@
         </div>
 
     </div>
+
+    <!-- Barcode Scanner Modal -->
+    <div id="scannerModal" class="modal">
+
+        <div class="modal-content scanner-content">
+
+            <span id="closeScanner" class="close-button">&times;</span>
+
+            <h2>Scan Barcode</h2>
+
+            <p class="scanner-instructions">
+                Point your camera at the product barcode.
+            </p>
+
+            <video
+                id="scannerVideo"
+                autoplay
+                playsinline>
+            </video>
+
+            <p id="scannerStatus">
+                Starting camera...
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ZXing barcode scanning library -->
+    <script src="https://unpkg.com/@zxing/browser@0.2.1"></script>
 
     <script src="app.js"></script>
 
