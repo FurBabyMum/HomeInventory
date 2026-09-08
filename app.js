@@ -1,4 +1,3 @@
-
 // Home Inventory - temporary test data
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyMkiyIDlkzbya3BC6_6KxQmh6yOkRCw322SBETEQ4M6mUFQPVaHVsA8yj2uJA4WwsrbQ/exec";
@@ -165,6 +164,38 @@ function updateLocationCounts() {
     });
 }
 
+// --------------------------------------------------
+// SAVE INVENTORY TO GOOGLE SHEETS
+// --------------------------------------------------
+
+async function saveInventory() {
+
+    const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+            action: "saveInventory",
+            inventory: inventory
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error("Unable to save inventory.");
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+        throw new Error(
+            data.error || "Unable to save inventory."
+        );
+    }
+
+    return data;
+}
+
 // Add Item form
 
 const addItemButton = document.getElementById("addItemButton");
@@ -186,7 +217,7 @@ window.addEventListener("click", function (event) {
     }
 });
 
-addItemForm.addEventListener("submit", function (event) {
+addItemForm.addEventListener("submit", async function (event) {
 
     event.preventDefault();
 
@@ -201,6 +232,23 @@ addItemForm.addEventListener("submit", function (event) {
     };
 
     inventory.push(newItem);
+
+    try {
+
+        await saveInventory();
+
+    } catch (error) {
+
+        console.error(error);
+
+        inventory.pop();
+
+        alert(
+            "The item could not be saved. Please try again."
+        );
+
+        return;
+    }
 
     addItemForm.reset();
 
