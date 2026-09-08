@@ -4,44 +4,7 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbyMkiyIDlkzbya3BC6_6KxQmh6yOkRCw322SBETEQ4M6mUFQPVaHVsA8yj2uJA4WwsrbQ/exec";
 
 let inventory = [];
-    {
-        product: "Heinz Baked Beans",
-        quantity: 4,
-        unit: "cans",
-        location: "Pantry 1"
-    },
-    {
-        product: "San Remo Spaghetti",
-        quantity: 3,
-        unit: "packets",
-        location: "Pantry 2"
-    },
-    {
-        product: "Milk",
-        quantity: 2,
-        unit: "bottles",
-        location: "Fridge 1"
-    },
-    {
-        product: "Chicken Breast",
-        quantity: 3,
-        unit: "portions",
-        location: "Freezer 1"
-    },
-    {
-        product: "Frozen Peas",
-        quantity: 2,
-        unit: "bags",
-        location: "Chest Freezer"
-    },
-    {
-        product: "Washing Powder",
-        quantity: 1,
-        unit: "box",
-        location: "Laundry"
-    }
-];
-
+    
 let selectedLocation = "All";
 
 const inventoryList = document.getElementById("inventoryList");
