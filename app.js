@@ -1,3 +1,5 @@
+alert("NEW APP.JS LOADED");
+
 // Home Inventory - temporary test data
 
 let inventory = [
