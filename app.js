@@ -1,8 +1,9 @@
-alert("NEW APP.JS LOADED");
 
 // Home Inventory - temporary test data
 
-let inventory = [
+const API_URL = "https://script.google.com/macros/s/AKfycbyMkiyIDlkzbya3BC6_6KxQmh6yOkRCw322SBETEQ4M6mUFQPVaHVsA8yj2uJA4WwsrbQ/exec";
+
+let inventory = [];
     {
         product: "Heinz Baked Beans",
         quantity: 4,
@@ -534,6 +535,47 @@ function handleScannedBarcode(barcode) {
 }
 
 
-// Display inventory when app opens
-updateLocationCounts();
-displayInventory();
+// --------------------------------------------------
+// LOAD INVENTORY FROM GOOGLE SHEETS
+// --------------------------------------------------
+
+async function loadInventory() {
+
+    try {
+
+        inventoryList.innerHTML =
+            "<p>Loading inventory...</p>";
+
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load inventory."
+            );
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(
+                data.error || "Unable to load inventory."
+            );
+        }
+
+        inventory = data.inventory || [];
+
+        updateLocationCounts();
+        displayInventory();
+
+    } catch (error) {
+
+        console.error(error);
+
+        inventoryList.innerHTML =
+            "<p>Unable to load inventory from Google Sheets.</p>";
+    }
+}
+
+
+// Load inventory when app opens
+loadInventory();
