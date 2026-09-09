@@ -196,11 +196,28 @@ function isExpiringSoon(dateValue) {
     return daysRemaining <= 7;
 }
 
+function updateExpiringSoonCount() {
+
+    const count = inventory.filter(item =>
+        isExpiringSoon(item.expiry)
+    ).length;
+
+    if (count > 0) {
+        expiringSoonButton.innerHTML =
+            `⏰ Expiring Soon <span class="expiry-count">${count}</span>`;
+    } else {
+        expiringSoonButton.innerHTML =
+            `⏰ Expiring Soon`;
+    }
+}
+
 // --------------------------------------------------
 // DISPLAY INVENTORY
 // --------------------------------------------------
 
 function displayInventory() {
+
+    updateExpiringSoonCount();
 
     const searchText = searchInput.value.toLowerCase();
 
