@@ -562,3 +562,35 @@ main {
     font-size: 12px;
     font-weight: 700;
 }
+
+/* ------------------------------
+   MODAL CLOSE BUTTON
+------------------------------ */
+
+.close-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    top: 8px;
+    right: 8px;
+
+    border-radius: 50%;
+
+    font-size: 30px;
+    line-height: 1;
+
+    color: #4b5563;
+    background: #f3f4f6;
+
+    cursor: pointer;
+    user-select: none;
+}
+
+.close-button:active {
+    background: #e5e7eb;
+}
+

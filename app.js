@@ -641,7 +641,37 @@ const scannerVideo =
 const scannerStatus =
     document.getElementById("scannerStatus");
 
+const closeScanner =
+    document.getElementById("closeScanner");
+
 let scannerControls = null;
+
+
+/* Close barcode scanner */
+
+function closeBarcodeScanner() {
+
+    if (scannerControls) {
+
+        scannerControls.stop();
+
+        scannerControls = null;
+    }
+
+    scannerVideo.srcObject = null;
+
+    scannerModal.style.display = "none";
+
+    scannerStatus.textContent =
+        "Starting camera...";
+}
+
+
+closeScanner.onclick = () => {
+
+    closeBarcodeScanner();
+
+};
 
 scanBarcodeButton.addEventListener("click", async () => {
 
@@ -664,11 +694,9 @@ scanBarcodeButton.addEventListener("click", async () => {
 
                 if (!result) return;
 
-                scannerControls.stop();
-
                 const code = result.getText();
 
-                scannerModal.style.display = "none";
+                closeBarcodeScanner();
 
                 const existing =
                     inventory.find(item =>
