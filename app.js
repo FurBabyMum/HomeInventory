@@ -201,16 +201,51 @@ async function lookupProductByBarcode(code) {
         const response = await fetch(
             "https://world.openfoodfacts.org/api/v2/product/" +
             encodeURIComponent(code) +
-            ".json?fields=product_name,brands"
+            ".json?fields=product_name,brands,categories_tags"
         );
 
         const data = await response.json();
 
-        if (!data.product) return null;
+        if (!data.product) {
+            return null;
+        }
 
-        return data.product.product_name || null;
+        const productName =
+            data.product.product_name || "";
 
-    } catch {
+        if (!productName) {
+            return null;
+        }
+
+        const categories =
+            data.product.categories_tags || [];
+
+        const categoryText =
+            categories.join(" ").toLowerCase();
+
+        let appCategory = "Food";
+
+        if (
+            categoryText.includes("beverage") ||
+            categoryText.includes("drink") ||
+            categoryText.includes("juice") ||
+            categoryText.includes("water") ||
+            categoryText.includes("soft-drink")
+        ) {
+            appCategory = "Drinks";
+        }
+
+        return {
+            name: productName,
+            category: appCategory
+        };
+
+    } catch (error) {
+
+        console.error(
+            "Product lookup failed:",
+            error
+        );
 
         return null;
     }
@@ -290,10 +325,18 @@ scanBarcodeButton.addEventListener("click", async () => {
                 const found =
                     await lookupProductByBarcode(code);
 
-                productName.value =
-                    found || "";
+                if (found) {
 
-                productName.focus();
+                    productName.value = found.name;
+
+                    category.value = found.category;
+
+                } else {
+
+                    productName.value = "";
+                }
+
+productName.focus();
             }
         );
 });
