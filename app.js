@@ -1,9 +1,8 @@
-// Home Inventory - temporary test data
+// Home Inventory
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyMkiyIDlkzbya3BC6_6KxQmh6yOkRCw322SBETEQ4M6mUFQPVaHVsA8yj2uJA4WwsrbQ/exec";
 
 let inventory = [];
-    
 let selectedLocation = "All";
 
 const inventoryList = document.getElementById("inventoryList");
@@ -11,8 +10,10 @@ const searchInput = document.getElementById("searchInput");
 const locationCards = document.querySelectorAll(".location-card");
 const showAllButton = document.getElementById("showAllButton");
 
+// --------------------------------------------------
+// DISPLAY INVENTORY
+// --------------------------------------------------
 
-// Display inventory
 function displayInventory() {
 
     const searchText = searchInput.value.toLowerCase();
@@ -23,14 +24,12 @@ function displayInventory() {
 
             const item = entry.item;
 
-            const matchesLocation =
-                selectedLocation === "All" ||
-                item.location === selectedLocation;
+            return (
+                (selectedLocation === "All" ||
+                    item.location === selectedLocation) &&
 
-            const matchesSearch =
-                item.product.toLowerCase().includes(searchText);
-
-            return matchesLocation && matchesSearch;
+                item.product.toLowerCase().includes(searchText)
+            );
         });
 
     inventoryList.innerHTML = "";
@@ -45,68 +44,26 @@ function displayInventory() {
         const item = entry.item;
         const index = entry.index;
 
-        const itemDiv = document.createElement("div");
-
-        itemDiv.className = "food-item";
-
-        // Make unit plural when quantity is more than 1
         let displayUnit = item.unit;
 
         if (item.quantity !== 1 && !displayUnit.endsWith("s")) {
             displayUnit += "s";
         }
 
-        // Format expiry date
-        let expiryText = "";
+        const itemDiv = document.createElement("div");
 
-        if (item.expiry) {
-
-            const expiryDate = new Date(item.expiry + "T00:00:00");
-
-            expiryText = `
-                <div class="item-expiry">
-                    📅 Expiry: ${expiryDate.toLocaleDateString("en-AU")}
-                </div>
-            `;
-        }
-
-        // Category - older test items may not have one
-        const categoryText = item.category
-            ? item.category
-            : "Uncategorised";
+        itemDiv.className = "food-item";
 
         itemDiv.innerHTML = `
             <div class="item-details">
-
                 <h3>${item.product}</h3>
-
-                <p>
-                    ${categoryText} ·
-                    ${item.quantity} ${displayUnit}
-                </p>
-
-                <p>
-                    📍 ${item.location}
-                </p>
-
-                ${expiryText}
-
+                <p>${item.category || "Uncategorised"} · ${item.quantity} ${displayUnit}</p>
+                <p>📍 ${item.location}</p>
             </div>
 
             <div class="item-actions">
-
-                <button
-                    class="edit-button"
-                    onclick="editItem(${index})">
-                    Edit
-                </button>
-
-                <button
-                    class="delete-button"
-                    onclick="deleteItem(${index})">
-                    Delete
-                </button>
-
+                <button onclick="editItem(${index})">Edit</button>
+                <button onclick="deleteItem(${index})">Delete</button>
             </div>
         `;
 
@@ -114,39 +71,9 @@ function displayInventory() {
     });
 }
 
-
-// Location buttons
-locationCards.forEach(card => {
-
-    card.addEventListener("click", function () {
-
-        selectedLocation = card.dataset.location;
-
-        displayInventory();
-    });
-
-});
-
-
-// Show all button
-if (showAllButton) {
-
-    showAllButton.addEventListener("click", function () {
-
-        selectedLocation = "All";
-
-        displayInventory();
-    });
-
-}
-
-
-// Search
-searchInput.addEventListener("input", function () {
-
-    displayInventory();
-
-});
+// --------------------------------------------------
+// LOCATION COUNTS
+// --------------------------------------------------
 
 function updateLocationCounts() {
 
@@ -158,14 +85,12 @@ function updateLocationCounts() {
             item.location === location
         ).length;
 
-        const countElement = card.querySelector(".location-count");
-
-        countElement.textContent = count;
+        card.querySelector(".location-count").textContent = count;
     });
 }
 
 // --------------------------------------------------
-// SAVE INVENTORY TO GOOGLE SHEETS
+// SAVE INVENTORY
 // --------------------------------------------------
 
 async function saveInventory() {
@@ -181,240 +106,114 @@ async function saveInventory() {
         })
     });
 
-    if (!response.ok) {
-        throw new Error("Unable to save inventory.");
-    }
-
     const data = await response.json();
 
     if (!data.success) {
-        throw new Error(
-            data.error || "Unable to save inventory."
-        );
+        throw new Error(data.error);
     }
-
-    return data;
 }
 
-// Add Item form
+// --------------------------------------------------
+// ADD ITEM
+// --------------------------------------------------
 
 const addItemButton = document.getElementById("addItemButton");
 const addItemModal = document.getElementById("addItemModal");
 const closeModal = document.getElementById("closeModal");
 const addItemForm = document.getElementById("addItemForm");
 
-addItemButton.addEventListener("click", function () {
+addItemButton.onclick = () =>
     addItemModal.style.display = "block";
-});
 
-closeModal.addEventListener("click", function () {
+closeModal.onclick = () =>
     addItemModal.style.display = "none";
-});
 
-window.addEventListener("click", function (event) {
-    if (event.target === addItemModal) {
-        addItemModal.style.display = "none";
-    }
-});
-
-addItemForm.addEventListener("submit", async function (event) {
+addItemForm.addEventListener("submit", async event => {
 
     event.preventDefault();
 
-    const newItem = {
-        product: document.getElementById("productName").value,
-        barcode: document.getElementById("barcode").value,
-        category: document.getElementById("category").value,
-        quantity: Number(document.getElementById("quantity").value),
-        unit: document.getElementById("unit").value,
-        location: document.getElementById("location").value,
-        expiry: document.getElementById("expiryDate").value
-    };
+    inventory.push({
+        product: productName.value,
+        barcode: barcode.value,
+        category: category.value,
+        quantity: Number(quantity.value),
+        unit: unit.value,
+        location: location.value,
+        expiry: expiryDate.value
+    });
 
-    inventory.push(newItem);
-
-    try {
-
-        await saveInventory();
-
-    } catch (error) {
-
-        console.error(error);
-
-        inventory.pop();
-
-        alert(
-            "The item could not be saved. Please try again."
-        );
-
-        return;
-    }
+    await saveInventory();
 
     addItemForm.reset();
 
-    document.getElementById("quantity").value = 1;
-
     addItemModal.style.display = "none";
-
-    selectedLocation = "All";
 
     updateLocationCounts();
     displayInventory();
 });
 
 // --------------------------------------------------
-// EDIT ITEM
+// EDIT
 // --------------------------------------------------
 
-const editItemModal =
-    document.getElementById("editItemModal");
-
-const editItemForm =
-    document.getElementById("editItemForm");
-
-const closeEditModal =
-    document.getElementById("closeEditModal");
-
-
-function editItem(index) {
+async function editItem(index) {
 
     const item = inventory[index];
 
-    document.getElementById("editIndex").value = index;
+    const newQuantity = prompt(
+        "Quantity",
+        item.quantity
+    );
 
-    document.getElementById("editProductName").value =
-        item.product || "";
+    if (newQuantity === null) return;
 
-    document.getElementById("editBarcode").value =
-        item.barcode || "";
+    item.quantity = Number(newQuantity);
 
-    document.getElementById("editCategory").value =
-        item.category || "Food";
+    await saveInventory();
 
-    document.getElementById("editQuantity").value =
-        item.quantity || 1;
-
-    document.getElementById("editUnit").value =
-        item.unit || "item";
-
-    document.getElementById("editLocation").value =
-        item.location;
-
-    document.getElementById("editExpiryDate").value =
-        item.expiry || "";
-
-    editItemModal.style.display = "block";
+    displayInventory();
 }
 
-
-closeEditModal.addEventListener("click", function () {
-
-    editItemModal.style.display = "none";
-
-});
-
-
-editItemForm.addEventListener("submit", async function (event) {
-
-    event.preventDefault();
-
-    const index =
-        Number(document.getElementById("editIndex").value);
-
-    inventory[index] = {
-
-        product:
-            document.getElementById("editProductName").value,
-
-        barcode:
-            document.getElementById("editBarcode").value,
-
-        category:
-            document.getElementById("editCategory").value,
-
-        quantity:
-            Number(document.getElementById("editQuantity").value),
-
-        unit:
-            document.getElementById("editUnit").value,
-
-        location:
-            document.getElementById("editLocation").value,
-
-        expiry:
-            document.getElementById("editExpiryDate").value
-    };
-
-    try {
-
-        await saveInventory();
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "The changes could not be saved. Please try again."
-        );
-
-        return;
-    }
-
-    editItemModal.style.display = "none";
-
-    updateLocationCounts();
-    displayInventory();
-
-});
-
-
-window.addEventListener("click", function (event) {
-
-    if (event.target === editItemModal) {
-        editItemModal.style.display = "none";
-    }
-
-});
-
 // --------------------------------------------------
-// DELETE ITEM
+// DELETE
 // --------------------------------------------------
 
 async function deleteItem(index) {
 
-    const item = inventory[index];
-
-    const confirmed = confirm(
-        "Delete " + item.product + " from your inventory?"
-    );
-
-    if (!confirmed) {
-        return;
-    }
-
-    const deletedItem = inventory[index];
+    if (!confirm("Delete this item?")) return;
 
     inventory.splice(index, 1);
 
-    try {
-
-        await saveInventory();
-
-    } catch (error) {
-
-        console.error(error);
-
-        inventory.splice(index, 0, deletedItem);
-
-        alert(
-            "The item could not be deleted. Please try again."
-        );
-
-        return;
-    }
+    await saveInventory();
 
     updateLocationCounts();
     displayInventory();
+}
+
+// --------------------------------------------------
+// PRODUCT LOOKUP
+// --------------------------------------------------
+
+async function lookupProductByBarcode(code) {
+
+    try {
+
+        const response = await fetch(
+            "https://world.openfoodfacts.org/api/v2/product/" +
+            encodeURIComponent(code) +
+            ".json?fields=product_name,brands"
+        );
+
+        const data = await response.json();
+
+        if (!data.product) return null;
+
+        return data.product.product_name || null;
+
+    } catch {
+
+        return null;
+    }
 }
 
 // --------------------------------------------------
@@ -427,237 +226,110 @@ const scanBarcodeButton =
 const scannerModal =
     document.getElementById("scannerModal");
 
-const closeScanner =
-    document.getElementById("closeScanner");
-
 const scannerVideo =
     document.getElementById("scannerVideo");
 
 const scannerStatus =
     document.getElementById("scannerStatus");
 
-
-let barcodeReader = null;
 let scannerControls = null;
-let barcodeDetected = false;
 
-
-// Open scanner
-scanBarcodeButton.addEventListener("click", async function () {
+scanBarcodeButton.addEventListener("click", async () => {
 
     scannerModal.style.display = "block";
 
-    scannerStatus.textContent =
-        "Camera ready — hold the barcode steady in the centre.";
+    const reader =
+        new ZXingBrowser.BrowserMultiFormatOneDReader();
 
-    barcodeDetected = false;
-
-    try {
-
-        barcodeReader =
-            new ZXingBrowser.BrowserMultiFormatOneDReader();
-
-        scannerControls =
-            await barcodeReader.decodeFromConstraints(
-
-                {
-                    video: {
-                        facingMode: {
-                            ideal: "environment"
-                        }
-                    }
-                },
-
-                scannerVideo,
-
-                function (result, error, controls) {
-
-                    if (result && !barcodeDetected) {
-
-                        barcodeDetected = true;
-
-                        const barcode = result.getText();
-
-                        scannerStatus.textContent =
-                            "Barcode found: " + barcode;
-
-                        controls.stop();
-
-                        handleScannedBarcode(barcode);
+    scannerControls =
+        await reader.decodeFromConstraints(
+            {
+                video: {
+                    facingMode: {
+                        ideal: "environment"
                     }
                 }
-            );
+            },
+            scannerVideo,
+            async result => {
 
-            scannerStatus.textContent =
-                "Camera ready — hold a barcode in front of the camera.";
+                if (!result) return;
 
-    } catch (error) {
+                scannerControls.stop();
 
-        console.error(error);
+                const code = result.getText();
 
-        scannerStatus.textContent =
-            "Unable to start camera. Please check camera permission.";
-    }
+                scannerModal.style.display = "none";
 
+                const existing =
+                    inventory.find(item =>
+                        item.barcode === code
+                    );
+
+                if (existing) {
+
+                    if (confirm("Increase quantity by 1?")) {
+
+                        existing.quantity += 1;
+
+                        await saveInventory();
+
+                        displayInventory();
+                    }
+
+                    return;
+                }
+
+                barcode.value = code;
+
+                addItemModal.style.display = "block";
+
+                productName.value =
+                    "Looking up product...";
+
+                const found =
+                    await lookupProductByBarcode(code);
+
+                productName.value =
+                    found || "";
+
+                productName.focus();
+            }
+        );
 });
-
-
-// Close scanner
-function stopScanner() {
-
-    if (scannerControls) {
-
-        scannerControls.stop();
-
-        scannerControls = null;
-    }
-
-    scannerModal.style.display = "none";
-}
-
-
-closeScanner.addEventListener("click", function () {
-
-    stopScanner();
-
-});
-
-
-window.addEventListener("click", function (event) {
-
-    if (event.target === scannerModal) {
-
-        stopScanner();
-    }
-
-});
-
 
 // --------------------------------------------------
-// HANDLE SCANNED BARCODE
+// LOAD INVENTORY
 // --------------------------------------------------
 
-async function handleScannedBarcode(barcode) {
+async function loadInventory() {
 
-    stopScanner();
+    const response = await fetch(API_URL);
 
+    const data = await response.json();
 
-    // Look for an existing product with the same barcode
-    const existingIndex = inventory.findIndex(item =>
-        item.barcode === barcode
-    );
-
-
-    if (existingIndex !== -1) {
-
-        const existingItem = inventory[existingIndex];
-
-        const increaseQuantity = confirm(
-            existingItem.product +
-            " is already in your inventory.\n\n" +
-            "Increase quantity by 1?"
-        );
-
-
-        if (increaseQuantity) {
-
-    existingItem.quantity += 1;
-
-    try {
-
-        await saveInventory();
-
-    } catch (error) {
-
-        console.error(error);
-
-        existingItem.quantity -= 1;
-
-        alert(
-            "The quantity could not be saved. Please try again."
-        );
-
-        return;
-    }
+    inventory = data.inventory || [];
 
     updateLocationCounts();
     displayInventory();
 }
 
-        return;
-    }
+locationCards.forEach(card =>
+    card.addEventListener("click", () => {
 
+        selectedLocation = card.dataset.location;
 
-    // New barcode - try to identify the product
-document.getElementById("barcode").value = barcode;
-
-addItemModal.style.display = "block";
-
-const productNameField =
-    document.getElementById("productName");
-
-productNameField.value = "Looking up product...";
-
-const foundProduct =
-    await lookupProductByBarcode(barcode);
-
-if (foundProduct) {
-
-    productNameField.value = foundProduct;
-
-} else {
-
-    productNameField.value = "";
-
-    alert(
-        "Product not found automatically. Please enter the product name."
-    );
-}
-
-productNameField.focus();
-
-
-// --------------------------------------------------
-// LOAD INVENTORY FROM GOOGLE SHEETS
-// --------------------------------------------------
-
-async function loadInventory() {
-
-    try {
-
-        inventoryList.innerHTML =
-            "<p>Loading inventory...</p>";
-
-        const response = await fetch(API_URL);
-
-        if (!response.ok) {
-            throw new Error(
-                "Unable to load inventory."
-            );
-        }
-
-        const data = await response.json();
-
-        if (!data.success) {
-            throw new Error(
-                data.error || "Unable to load inventory."
-            );
-        }
-
-        inventory = data.inventory || [];
-
-        updateLocationCounts();
         displayInventory();
+    })
+);
 
-    } catch (error) {
+showAllButton.onclick = () => {
 
-        console.error(error);
+    selectedLocation = "All";
 
-        inventoryList.innerHTML =
-            "<p>Unable to load inventory from Google Sheets.</p>";
-    }
-}
+    displayInventory();
+};
 
+searchInput.oninput = displayInventory;
 
-// Load inventory when app opens
 loadInventory();
