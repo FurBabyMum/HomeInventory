@@ -10,6 +10,67 @@ const searchInput = document.getElementById("searchInput");
 const locationCards = document.querySelectorAll(".location-card");
 const showAllButton = document.getElementById("showAllButton");
 
+
+function formatExpiryDate(dateString) {
+
+    if (!dateString) return "";
+
+    const parts = dateString.split("-");
+
+    if (parts.length !== 3) {
+        return dateString;
+    }
+
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+function getExpiryStatus(dateString) {
+
+    if (!dateString) return "";
+
+    const parts = dateString.split("-");
+
+    if (parts.length !== 3) return "";
+
+    const expiryDate = new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+    );
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+    expiryDate.setHours(0, 0, 0, 0);
+
+    const millisecondsPerDay =
+        1000 * 60 * 60 * 24;
+
+    const daysRemaining =
+        Math.round(
+            (expiryDate - today) /
+            millisecondsPerDay
+        );
+
+    if (daysRemaining < 0) {
+        return " — EXPIRED";
+    }
+
+    if (daysRemaining === 0) {
+        return " — Expires today";
+    }
+
+    if (daysRemaining === 1) {
+        return " — Expires tomorrow";
+    }
+
+    if (daysRemaining <= 7) {
+        return ` — Expires in ${daysRemaining} days`;
+    }
+
+    return "";
+}
+
 // --------------------------------------------------
 // DISPLAY INVENTORY
 // --------------------------------------------------
@@ -59,6 +120,7 @@ function displayInventory() {
                 <h3>${item.product}</h3>
                 <p>${item.category || "Uncategorised"} · ${item.quantity} ${displayUnit}</p>
                 <p>📍 ${item.location}</p>
+                ${item.expiry ? `<p>📅 Expiry: ${formatExpiryDate(item.expiry)}${getExpiryStatus(item.expiry)}</p>` : ""}
             </div>
 
             <div class="item-actions">
