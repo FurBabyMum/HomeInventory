@@ -11,32 +11,59 @@ const locationCards = document.querySelectorAll(".location-card");
 const showAllButton = document.getElementById("showAllButton");
 
 
-function formatExpiryDate(dateString) {
+function formatExpiryDate(dateValue) {
 
-    if (!dateString) return "";
+    if (!dateValue) return "";
 
-    const parts = dateString.split("-");
+    // Normal yyyy-mm-dd value
+    if (
+        typeof dateValue === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+    ) {
+        const parts = dateValue.split("-");
 
-    if (parts.length !== 3) {
-        return dateString;
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
 
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    // Handle a full date/time returned from Google Sheets
+    const date = new Date(dateValue);
+
+    if (isNaN(date.getTime())) {
+        return String(dateValue);
+    }
+
+    return date.toLocaleDateString("en-AU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
 }
 
-function getExpiryStatus(dateString) {
+function getExpiryStatus(dateValue) {
 
-    if (!dateString) return "";
+    if (!dateValue) return "";
 
-    const parts = dateString.split("-");
+    let expiryDate;
 
-    if (parts.length !== 3) return "";
+    // Normal yyyy-mm-dd value
+    if (
+        typeof dateValue === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+    ) {
+        const parts = dateValue.split("-");
 
-    const expiryDate = new Date(
-        Number(parts[0]),
-        Number(parts[1]) - 1,
-        Number(parts[2])
-    );
+        expiryDate = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+    } else {
+        expiryDate = new Date(dateValue);
+    }
+
+    if (isNaN(expiryDate.getTime())) {
+        return "";
+    }
 
     const today = new Date();
 
