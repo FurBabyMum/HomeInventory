@@ -153,26 +153,123 @@ addItemForm.addEventListener("submit", async event => {
 });
 
 // --------------------------------------------------
-// EDIT
+// EDIT ITEM
 // --------------------------------------------------
 
-async function editItem(index) {
+const editItemModal =
+    document.getElementById("editItemModal");
+
+const closeEditModal =
+    document.getElementById("closeEditModal");
+
+const editItemForm =
+    document.getElementById("editItemForm");
+
+const editIndex =
+    document.getElementById("editIndex");
+
+const editProductName =
+    document.getElementById("editProductName");
+
+const editBarcode =
+    document.getElementById("editBarcode");
+
+const editCategory =
+    document.getElementById("editCategory");
+
+const editQuantity =
+    document.getElementById("editQuantity");
+
+const editUnit =
+    document.getElementById("editUnit");
+
+const editLocation =
+    document.getElementById("editLocation");
+
+const editExpiryDate =
+    document.getElementById("editExpiryDate");
+
+
+function editItem(index) {
 
     const item = inventory[index];
 
-    const newQuantity = prompt(
-        "Quantity",
-        item.quantity
-    );
+    editIndex.value = index;
 
-    if (newQuantity === null) return;
+    editProductName.value =
+        item.product || "";
 
-    item.quantity = Number(newQuantity);
+    editBarcode.value =
+        item.barcode || "";
 
-    await saveInventory();
+    editCategory.value =
+        item.category || "Food";
 
-    displayInventory();
+    editQuantity.value =
+        item.quantity || 1;
+
+    editUnit.value =
+        item.unit || "item";
+
+    editLocation.value =
+        item.location || "Pantry 1";
+
+    editExpiryDate.value =
+        item.expiry || "";
+
+    editItemModal.style.display = "block";
 }
+
+
+closeEditModal.onclick = () => {
+
+    editItemModal.style.display = "none";
+
+};
+
+
+editItemForm.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+        const index =
+            Number(editIndex.value);
+
+        inventory[index] = {
+
+            product:
+                editProductName.value,
+
+            barcode:
+                editBarcode.value,
+
+            category:
+                editCategory.value,
+
+            quantity:
+                Number(editQuantity.value),
+
+            unit:
+                editUnit.value,
+
+            location:
+                editLocation.value,
+
+            expiry:
+                editExpiryDate.value
+        };
+
+        await saveInventory();
+
+        editItemModal.style.display = "none";
+
+        updateLocationCounts();
+
+        displayInventory();
+    }
+);
 
 // --------------------------------------------------
 // DELETE
