@@ -201,7 +201,7 @@ async function lookupProductByBarcode(code) {
         const response = await fetch(
             "https://world.openfoodfacts.org/api/v2/product/" +
             encodeURIComponent(code) +
-            ".json?fields=product_name,brands,categories_tags"
+            ".json?fields=product_name,brands,categories_tags,packaging_tags"
         );
 
         const data = await response.json();
@@ -220,13 +220,24 @@ async function lookupProductByBarcode(code) {
         const categories =
             data.product.categories_tags || [];
 
+        const packaging =
+            data.product.packaging_tags || [];
+
         const categoryText =
             categories.join(" ").toLowerCase();
 
-        let appCategory = "Food";
+        const packagingText =
+            packaging.join(" ").toLowerCase();
 
         const productNameText =
             productName.toLowerCase();
+
+
+        // -----------------------------
+        // CATEGORY
+        // -----------------------------
+
+        let appCategory = "Food";
 
         if (
             categoryText.includes("beverage") ||
@@ -240,9 +251,63 @@ async function lookupProductByBarcode(code) {
             appCategory = "Drinks";
         }
 
+
+        // -----------------------------
+        // UNIT
+        // -----------------------------
+
+        let appUnit = "item";
+
+        if (
+            packagingText.includes("can") ||
+            packagingText.includes("tin") ||
+            productNameText.includes("canned")
+        ) {
+            appUnit = "can";
+
+        } else if (
+            packagingText.includes("bottle")
+        ) {
+            appUnit = "bottle";
+
+        } else if (
+            packagingText.includes("jar")
+        ) {
+            appUnit = "jar";
+
+        } else if (
+            packagingText.includes("box") ||
+            packagingText.includes("carton")
+        ) {
+            appUnit = "box";
+
+        } else if (
+            packagingText.includes("bag")
+        ) {
+            appUnit = "bag";
+
+        } else if (
+            packagingText.includes("packet") ||
+            packagingText.includes("wrapper") ||
+            packagingText.includes("pouch")
+        ) {
+            appUnit = "packet";
+        }
+
+
+        // Milk is usually sold as a bottle/carton,
+        // so use bottle as our inventory unit.
+        if (
+            productNameText.includes("milk")
+        ) {
+            appUnit = "bottle";
+        }
+
+
         return {
             name: productName,
-            category: appCategory
+            category: appCategory,
+            unit: appUnit
         };
 
     } catch (error) {
@@ -335,6 +400,8 @@ scanBarcodeButton.addEventListener("click", async () => {
                     productName.value = found.name;
 
                     category.value = found.category;
+
+                    unit.value = found.unit;
 
                 } else {
 
