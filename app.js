@@ -588,13 +588,33 @@ async function handleScannedBarcode(barcode) {
     }
 
 
-    // New barcode - open Add Item form
-    document.getElementById("barcode").value = barcode;
+    // New barcode - try to identify the product
+document.getElementById("barcode").value = barcode;
 
-    addItemModal.style.display = "block";
+addItemModal.style.display = "block";
 
-    document.getElementById("productName").focus();
+const productNameField =
+    document.getElementById("productName");
+
+productNameField.value = "Looking up product...";
+
+const foundProduct =
+    await lookupProductByBarcode(barcode);
+
+if (foundProduct) {
+
+    productNameField.value = foundProduct;
+
+} else {
+
+    productNameField.value = "";
+
+    alert(
+        "Product not found automatically. Please enter the product name."
+    );
 }
+
+productNameField.focus();
 
 
 // --------------------------------------------------
