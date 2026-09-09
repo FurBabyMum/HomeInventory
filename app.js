@@ -225,12 +225,17 @@ async function lookupProductByBarcode(code) {
 
         let appCategory = "Food";
 
+        const productNameText =
+            productName.toLowerCase();
+
         if (
             categoryText.includes("beverage") ||
             categoryText.includes("drink") ||
             categoryText.includes("juice") ||
             categoryText.includes("water") ||
-            categoryText.includes("soft-drink")
+            categoryText.includes("soft-drink") ||
+            categoryText.includes("milk") ||
+            productNameText.includes("milk")
         ) {
             appCategory = "Drinks";
         }
