@@ -8,7 +8,7 @@
 
     <title>Home Inventory</title>
 
-    <link rel="stylesheet" href="style.css?v=17">
+    <link rel="stylesheet" href="style.css?v=18">
 </head>
 
 
@@ -25,11 +25,22 @@
         <!-- Search -->
         <section class="search-section">
 
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="🔍 Search inventory..."
-            >
+            <div class="search-wrapper">
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="🔍 Search inventory..."
+                >
+
+                <button
+                    type="button"
+                    id="clearSearchButton"
+                    aria-label="Clear search">
+                    ×
+                </button>
+
+            </div>
 
         </section>
 
@@ -105,6 +116,10 @@
                 <div>
                     <button id="showAllButton">
                         Show All
+                    </button>
+
+                    <button id="expiringSoonButton">
+                        ⏰ Expiring Soon
                     </button>
 
                     <button id="addItemButton">
@@ -335,7 +350,7 @@
     <!-- ZXing barcode scanning library -->
     <script type="text/javascript" src="https://unpkg.com/@zxing/browser@latest"></script>
 
-    <script src="app.js?v=17"></script>
+    <script src="app.js?v=18"></script>
 
 </body>
 

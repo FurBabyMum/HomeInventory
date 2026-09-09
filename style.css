@@ -4,298 +4,290 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    color: #222;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: #f4f6f8;
+    color: #1f2937;
 }
+
+
+/* ------------------------------
+   HEADER
+------------------------------ */
 
 header {
     background: white;
-    padding: 25px 20px 20px;
+    padding: 24px 20px 20px;
     text-align: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 header h1 {
     margin: 0;
     font-size: 28px;
+    font-weight: 700;
 }
 
 header p {
-    margin: 8px 0 0;
-    color: #666;
+    margin: 6px 0 0;
+    color: #6b7280;
+    font-size: 15px;
 }
+
+
+/* ------------------------------
+   MAIN
+------------------------------ */
 
 main {
-    max-width: 700px;
+    max-width: 760px;
     margin: auto;
-    padding: 20px;
+    padding: 20px 16px 110px;
 }
 
+
+/* ------------------------------
+   SEARCH
+------------------------------ */
+
 .search-section {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 #searchInput {
     width: 100%;
-    padding: 15px;
-    font-size: 17px;
-    border: 1px solid #ccc;
+    height: 50px;
+    padding: 0 16px;
+    font-size: 16px;
+    border: 1px solid #d1d5db;
     border-radius: 12px;
     background: white;
+    outline: none;
 }
 
-.locations {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 30px;
+#searchInput:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
 }
+
+.search-wrapper {
+    position: relative;
+}
+
+#searchInput {
+    padding-right: 48px;
+}
+
+#clearSearchButton {
+    display: none;
+
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+
+    background: #e5e7eb;
+    color: #4b5563;
+
+    font-size: 22px;
+    line-height: 34px;
+    font-weight: 500;
+
+    cursor: pointer;
+}
+
+#clearSearchButton:active {
+    background: #d1d5db;
+}
+
+/* ------------------------------
+   LOCATION CARDS
+------------------------------ */
 
 .locations {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 26px;
+}
+
+.location-card {
+    min-height: 105px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.location-card:active {
+    transform: scale(0.98);
 }
 
 .location-icon {
     display: block;
-    font-size: 28px;
-    margin-bottom: 5px;
+    font-size: 27px;
+    margin-bottom: 6px;
 }
 
 .location-name {
     display: block;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f2937;
 }
 
 .location-count {
-    display: block;
-    margin-top: 5px;
-    color: #666;
-}
-
-.inventory-section h2 {
-    margin-bottom: 15px;
-}
-
-.food-item {
-    background: white;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
-}
-
-.food-item h3 {
-    margin: 0 0 6px;
-    font-size: 18px;
-}
-
-.food-item p {
-    margin: 0;
-    color: #666;
-}
-
-.scan-button {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-
-    border: none;
-    border-radius: 30px;
-
-    padding: 16px 28px;
-
-    font-size: 17px;
-    font-weight: bold;
-
-    cursor: pointer;
-
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-@media (max-width: 500px) {
-
-    header h1 {
-        font-size: 24px;
-    }
-
-    .locations {
-        gap: 7px;
-    }
-
-    .location-card {
-        padding: 12px 5px;
-    }
-
-    .location-icon {
-        font-size: 24px;
-    }
-}
-
-/* Add Item Modal */
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
-}
-
-.modal-content {
-    background: white;
-    width: 90%;
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 25px;
+    display: inline-block;
+    margin-top: 7px;
+    min-width: 28px;
+    padding: 3px 8px;
     border-radius: 20px;
-    box-sizing: border-box;
+    background: #eef2f7;
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-.close-button {
-    float: right;
-    font-size: 32px;
+
+/* ------------------------------
+   INVENTORY HEADING
+------------------------------ */
+
+.inventory-heading {
+    margin-bottom: 14px;
+}
+
+.inventory-heading h2 {
+    margin: 0 0 12px;
+    font-size: 21px;
+}
+
+
+/* Three equal-size buttons */
+
+.inventory-heading > div {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+#showAllButton,
+#expiringSoonButton,
+#addItemButton {
+    width: 100%;
+    height: 46px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
 }
 
-#addItemForm {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+#showAllButton {
+    background: #e8eef7;
+    color: #1f2937;
 }
 
-#addItemForm label {
-    font-weight: bold;
-    margin-top: 5px;
-}
-
-#addItemForm input,
-#addItemForm select {
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+#expiringSoonButton {
+    background: #fff3cd;
+    color: #7a5700;
 }
 
 #addItemButton {
-    padding: 8px 12px;
-    font-size: 16px;
-    cursor: pointer;
+    background: #2563eb;
+    color: white;
 }
 
-.save-item-button {
-    margin-top: 15px;
-    padding: 14px;
-    font-size: 17px;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
 
-/* Inventory item details */
+/* ------------------------------
+   INVENTORY ITEMS
+------------------------------ */
 
 .food-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
+
+    background: white;
+    padding: 16px;
+    margin-bottom: 10px;
+
+    border: 1px solid #e8eaed;
+    border-radius: 14px;
+
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
 }
 
 .item-details {
     flex: 1;
+    min-width: 0;
 }
 
 .item-details h3 {
-    margin: 0 0 6px 0;
+    margin: 0 0 7px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
 }
 
 .item-details p {
     margin: 4px 0;
-}
-
-.item-expiry {
-    margin-top: 6px;
+    color: #6b7280;
     font-size: 14px;
-    color: #666;
 }
 
 
-/* Edit and Delete buttons */
+/* ------------------------------
+   EDIT / DELETE BUTTONS
+------------------------------ */
 
 .item-actions {
     display: flex;
-    gap: 6px;
+    flex-direction: column;
+    gap: 7px;
 }
 
-.edit-button,
-.delete-button {
-    padding: 8px 12px;
+.item-actions button {
+    width: 78px;
+    height: 38px;
+    padding: 0;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 9px;
+    font-family: inherit;
     font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.edit-button {
-    background: #e7e7e7;
+.item-actions button:first-child {
+    background: #e8eef7;
+    color: #1f2937;
 }
 
-.delete-button {
-    background: #f4dada;
+.item-actions button:last-child {
+    background: #fee2e2;
+    color: #b91c1c;
 }
 
 
-/* Mobile layout */
-
-@media (max-width: 500px) {
-
-    .food-item {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .item-actions {
-        justify-content: flex-end;
-    }
-
-}
-
-/* Barcode Scanner */
-
-.scanner-content {
-    text-align: center;
-}
-
-.scanner-instructions {
-    color: #666;
-    margin-bottom: 15px;
-}
-
-#scannerVideo {
-    width: 100%;
-    max-height: 420px;
-    background: black;
-    border-radius: 12px;
-    object-fit: cover;
-}
-
-#scannerStatus {
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-/* Expiry date warnings */
+/* ------------------------------
+   EXPIRY WARNINGS
+------------------------------ */
 
 .food-item .expiry-date {
+    margin-top: 7px;
     font-weight: 600;
 }
 
@@ -310,6 +302,220 @@ main {
 }
 
 .food-item .expiry-soon {
-    color: #9a7b00 !important;
+    color: #8a6d00 !important;
     font-weight: 700;
+}
+
+
+/* ------------------------------
+   SCAN BUTTON
+------------------------------ */
+
+.scan-button {
+    position: fixed;
+    z-index: 500;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: calc(100% - 32px);
+    max-width: 420px;
+    height: 54px;
+
+    border: none;
+    border-radius: 27px;
+
+    background: #2563eb;
+    color: white;
+
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 18px rgba(37, 99, 235, 0.30);
+}
+
+
+/* ------------------------------
+   MODALS
+------------------------------ */
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+
+    inset: 0;
+
+    background: rgba(17, 24, 39, 0.55);
+    overflow-y: auto;
+
+    padding: 20px 0;
+}
+
+.modal-content {
+    position: relative;
+
+    width: calc(100% - 32px);
+    max-width: 500px;
+
+    margin: 20px auto;
+    padding: 24px;
+
+    background: white;
+    border-radius: 18px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.20);
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.close-button {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+
+    font-size: 30px;
+    line-height: 1;
+
+    color: #6b7280;
+    cursor: pointer;
+}
+
+
+/* ------------------------------
+   FORMS
+------------------------------ */
+
+#addItemForm,
+#editItemForm {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#addItemForm label,
+#editItemForm label {
+    margin-top: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#addItemForm input,
+#addItemForm select,
+#editItemForm input,
+#editItemForm select {
+    width: 100%;
+    height: 46px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+
+    background: white;
+
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.save-item-button {
+    width: 100%;
+    height: 48px;
+
+    margin-top: 14px;
+    padding: 0;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #2563eb;
+    color: white;
+
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+
+/* ------------------------------
+   SCANNER
+------------------------------ */
+
+.scanner-content {
+    text-align: center;
+}
+
+.scanner-instructions {
+    color: #6b7280;
+    margin-bottom: 15px;
+}
+
+#scannerVideo {
+    width: 100%;
+    max-height: 420px;
+
+    background: black;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+#scannerStatus {
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+
+/* ------------------------------
+   MOBILE
+------------------------------ */
+
+@media (max-width: 500px) {
+
+    header {
+        padding-top: 20px;
+    }
+
+    header h1 {
+        font-size: 24px;
+    }
+
+    main {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .locations {
+        gap: 8px;
+    }
+
+    .location-card {
+        min-height: 96px;
+    }
+
+    .inventory-heading > div {
+        gap: 6px;
+    }
+
+    #showAllButton,
+    #expiringSoonButton,
+    #addItemButton {
+        height: 48px;
+        font-size: 13px;
+    }
+
+    .food-item {
+        align-items: flex-start;
+    }
+
+    .item-actions button {
+        width: 72px;
+    }
 }

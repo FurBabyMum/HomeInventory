@@ -4,11 +4,13 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyMkiyIDlkzbya3BC6_6KxQ
 
 let inventory = [];
 let selectedLocation = "All";
+let showExpiringSoon = false;
 
 const inventoryList = document.getElementById("inventoryList");
 const searchInput = document.getElementById("searchInput");
 const locationCards = document.querySelectorAll(".location-card");
 const showAllButton = document.getElementById("showAllButton");
+const expiringSoonButton = document.getElementById("expiringSoonButton");
 
 
 function formatExpiryDate(dateValue) {
@@ -151,6 +153,48 @@ function getExpiryClass(dateValue) {
     return "";
 }
 
+function isExpiringSoon(dateValue) {
+
+    if (!dateValue) return false;
+
+    let expiryDate;
+
+    if (
+        typeof dateValue === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+    ) {
+        const parts = dateValue.split("-");
+
+        expiryDate = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+
+    } else {
+
+        expiryDate = new Date(dateValue);
+    }
+
+    if (isNaN(expiryDate.getTime())) {
+        return false;
+    }
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+    expiryDate.setHours(0, 0, 0, 0);
+
+    const daysRemaining =
+        Math.round(
+            (expiryDate - today) /
+            (1000 * 60 * 60 * 24)
+        );
+
+    // Includes expired items and anything
+    // expiring within the next 7 days.
+    return daysRemaining <= 7;
+}
 
 // --------------------------------------------------
 // DISPLAY INVENTORY
@@ -169,6 +213,9 @@ function displayInventory() {
             return (
                 (selectedLocation === "All" ||
                     item.location === selectedLocation) &&
+
+                (!showExpiringSoon ||
+                    isExpiringSoon(item.expiry)) &&
 
                 item.product.toLowerCase().includes(searchText)
             );
@@ -674,17 +721,50 @@ locationCards.forEach(card =>
 
         selectedLocation = card.dataset.location;
 
+        showExpiringSoon = false;
+
         displayInventory();
     })
 );
+
+expiringSoonButton.onclick = () => {
+
+    selectedLocation = "All";
+
+    showExpiringSoon = true;
+
+    displayInventory();
+};
 
 showAllButton.onclick = () => {
 
     selectedLocation = "All";
 
+    showExpiringSoon = false;
+
     displayInventory();
 };
 
-searchInput.oninput = displayInventory;
+const clearSearchButton =
+    document.getElementById("clearSearchButton");
+
+searchInput.addEventListener("input", () => {
+
+    clearSearchButton.style.display =
+        searchInput.value ? "block" : "none";
+
+    displayInventory();
+});
+
+clearSearchButton.onclick = () => {
+
+    searchInput.value = "";
+
+    clearSearchButton.style.display = "none";
+
+    displayInventory();
+
+    searchInput.focus();
+};
 
 loadInventory();
