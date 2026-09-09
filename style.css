@@ -293,3 +293,23 @@ main {
     font-weight: bold;
 }
 
+/* Expiry date warnings */
+
+.food-item .expiry-date {
+    font-weight: 600;
+}
+
+.food-item .expiry-urgent {
+    color: #c62828 !important;
+    font-weight: 700;
+}
+
+.food-item .expiry-warning {
+    color: #ef6c00 !important;
+    font-weight: 700;
+}
+
+.food-item .expiry-soon {
+    color: #9a7b00 !important;
+    font-weight: 700;
+}

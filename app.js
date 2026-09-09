@@ -98,6 +98,60 @@ function getExpiryStatus(dateValue) {
     return "";
 }
 
+function getExpiryClass(dateValue) {
+
+    if (!dateValue) return "";
+
+    let expiryDate;
+
+    if (
+        typeof dateValue === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+    ) {
+        const parts = dateValue.split("-");
+
+        expiryDate = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+
+    } else {
+
+        expiryDate = new Date(dateValue);
+    }
+
+    if (isNaN(expiryDate.getTime())) {
+        return "";
+    }
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+    expiryDate.setHours(0, 0, 0, 0);
+
+    const daysRemaining =
+        Math.round(
+            (expiryDate - today) /
+            (1000 * 60 * 60 * 24)
+        );
+
+    if (daysRemaining <= 0) {
+        return "expiry-urgent";
+    }
+
+    if (daysRemaining <= 3) {
+        return "expiry-warning";
+    }
+
+    if (daysRemaining <= 7) {
+        return "expiry-soon";
+    }
+
+    return "";
+}
+
+
 // --------------------------------------------------
 // DISPLAY INVENTORY
 // --------------------------------------------------
@@ -147,7 +201,7 @@ function displayInventory() {
                 <h3>${item.product}</h3>
                 <p>${item.category || "Uncategorised"} · ${item.quantity} ${displayUnit}</p>
                 <p>📍 ${item.location}</p>
-                ${item.expiry ? `<p>📅 Expiry: ${formatExpiryDate(item.expiry)}${getExpiryStatus(item.expiry)}</p>` : ""}
+                ${item.expiry ? `<p class="expiry-date ${getExpiryClass(item.expiry)}">📅 Expiry: ${formatExpiryDate(item.expiry)}${getExpiryStatus(item.expiry)}</p>` : ""}
             </div>
 
             <div class="item-actions">
