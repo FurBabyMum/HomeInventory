@@ -519,3 +519,23 @@ main {
         width: 72px;
     }
 }
+
+/* ------------------------------
+   ACTIVE FILTERS
+------------------------------ */
+
+.location-card.active {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.15);
+}
+
+#showAllButton.active {
+    background: #2563eb;
+    color: white;
+}
+
+#expiringSoonButton.active {
+    background: #f59e0b;
+    color: white;
+}

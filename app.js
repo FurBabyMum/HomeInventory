@@ -10,7 +10,7 @@ const inventoryList = document.getElementById("inventoryList");
 const searchInput = document.getElementById("searchInput");
 const locationCards = document.querySelectorAll(".location-card");
 const showAllButton = document.getElementById("showAllButton");
-const expiringSoonButton = document.getElementById("expiringSoonButton");
+const inventoryTitle = document.getElementById("inventoryTitle");
 
 
 function formatExpiryDate(dateValue) {
@@ -720,8 +720,25 @@ locationCards.forEach(card =>
     card.addEventListener("click", () => {
 
         selectedLocation = card.dataset.location;
-
         showExpiringSoon = false;
+
+        // Remove active styling from everything
+        locationCards.forEach(c =>
+            c.classList.remove("active")
+        );
+
+        showAllButton.classList.remove("active");
+        expiringSoonButton.classList.remove("active");
+
+        // Highlight selected location
+        card.classList.add("active");
+
+        // Change heading
+        const icon =
+            card.querySelector(".location-icon").textContent;
+
+        inventoryTitle.textContent =
+            `${icon} ${selectedLocation}`;
 
         displayInventory();
     })
@@ -730,8 +747,17 @@ locationCards.forEach(card =>
 expiringSoonButton.onclick = () => {
 
     selectedLocation = "All";
-
     showExpiringSoon = true;
+
+    locationCards.forEach(card =>
+        card.classList.remove("active")
+    );
+
+    showAllButton.classList.remove("active");
+    expiringSoonButton.classList.add("active");
+
+    inventoryTitle.textContent =
+        "⏰ Expiring Soon";
 
     displayInventory();
 };
@@ -739,8 +765,17 @@ expiringSoonButton.onclick = () => {
 showAllButton.onclick = () => {
 
     selectedLocation = "All";
-
     showExpiringSoon = false;
+
+    locationCards.forEach(card =>
+        card.classList.remove("active")
+    );
+
+    expiringSoonButton.classList.remove("active");
+    showAllButton.classList.add("active");
+
+    inventoryTitle.textContent =
+        "📦 All Inventory";
 
     displayInventory();
 };
